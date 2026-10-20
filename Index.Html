@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Project Roxy</title>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #10131b;
+  color: white;
+}
+
+.app {
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;
+  max-width: 700px;
+  margin: auto;
+  background:
+    linear-gradient(
+      rgba(10,15,25,.65),
+      rgba(10,15,25,.9)
+    ),
+    url("assets/roxy-background.jpg")
+    center/cover;
+}
+
+header {
+  padding: 20px;
+  background: rgba(0,0,0,.65);
+  text-align: center;
+}
+
+header h1 {
+  margin: 0;
+  color: #ff477e;
+}
+
+header p {
+  margin: 5px;
+  color: #ccc;
+}
+
+#chat {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+}
+
+.message {
+  padding: 12px 16px;
+  margin: 12px 0;
+  border-radius: 16px;
+  max-width: 85%;
+  overflow-wrap: anywhere;
+}
+
+.roxy {
+  background: rgba(255,71,126,.85);
+}
+
+.user {
+  background: rgba(45,110,210,.85);
+  margin-left: auto;
+}
+
+.controls {
+  display: flex;
+  padding: 12px;
+  gap: 8px;
+  background: rgba(0,0,0,.8);
+}
+
+input {
+  flex: 1;
+  min-width: 0;
+  padding: 14px;
+  border-radius: 25px;
+  border: none;
+  font-size: 16px;
+}
+
+button {
+  border: none;
+  border-radius: 25px;
+  padding: 12px 16px;
+  background: #ff477e;
+  color: white;
+  font-weight: bold;
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+<header>
+  <h1>ROXY 💋</h1>
+  <p>Project Roxy | Garage Assistant</p>
+</header>
+
+<main id="chat" aria-live="polite">
+  <div class="message roxy">
+    Hey Frank! Roxy's garage is open. 🔧
+  </div>
+</main>
+
+<div class="controls">
+  <button onclick="listen()" aria-label="Microphone">
+    🎤
+  </button>
+
+  <input
+    id="message"
+    placeholder="Talk to Roxy..."
+  >
+
+  <button onclick="send()">Send</button>
+</div>
+
+</div>
+
+<script>
+const input = document.getElementById("message");
+const chat = document.getElementById("chat");
+
+function addMessage(text, type) {
+  const div = document.createElement("div");
+
+  div.className = "message " + type;
+  div.textContent = text;
+
+  chat.appendChild(div);
+  chat.scrollTop = chat.scrollHeight;
+}
+
+function send() {
+  const text = input.value.trim();
+
+  if (!text) return;
+
+  addMessage(text, "user");
+  input.value = "";
+
+  addMessage(
+    "I'm here, Frank! My live AI connection " +
+    "isn't installed yet, but the chat is working.",
+    "roxy"
+  );
+}
+
+input.addEventListener("keydown", function(e) {
+  if (e.key === "Enter") {
+    send();
+  }
+});
+
+function listen() {
+  const SpeechRecognition =
+    window.SpeechRecognition ||
+    window.webkitSpeechRecognition;
+
+  if (!SpeechRecognition) {
+    addMessage(
+      "Microphone recognition isn't supported " +
+      "in this browser.",
+      "roxy"
+    );
+    return;
+  }
+
+  const recognition = new SpeechRecognition();
+
+  recognition.lang = "en-ZA";
+
+  recognition.onresult = function(event) {
+    input.value = event.results[0][0].transcript;
+  };
+
+  recognition.onerror = function() {
+    addMessage(
+      "I couldn't hear that. Try again.",
+      "roxy"
+    );
+  };
+
+  recognition.start();
+}
+</script>
+
+</body>
+</html>
